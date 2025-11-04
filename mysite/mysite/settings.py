@@ -1,3 +1,4 @@
+
 """
 Django settings for mysite project.
 
@@ -19,14 +20,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: keep the secret key used in in production secret!
 SECRET_KEY = 'django-insecure-^=6-_k)oh!n9-fpcd1qd0rf(!8y2!!8cc*so1if(!*ydv@*_dc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['8000-firebase-quize-management-1762269071140.cluster-isls3qj2gbd5qs4jkjqvhahfv6.cloudworkstations.dev', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://8000-firebase-quize-management-1762269071140.cluster-isls3qj2gbd5qs4jkjqvhahfv6.cloudworkstations.dev',
+]
 
 # Application definition
 
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'quiz',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +126,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'login'

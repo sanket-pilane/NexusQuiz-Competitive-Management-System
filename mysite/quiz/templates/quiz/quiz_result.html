@@ -1,0 +1,40 @@
+{% extends 'quiz/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center shadow-lg">
+                <div class="card-body">
+                    <h1 class="display-1">
+                        {% if percentage >= 80 %}
+                            🥳
+                        {% elif percentage >= 50 %}
+                            👍
+                        {% else %}
+                            💪
+                        {% endif %}
+                    </h1>
+                    <h2 class="card-title mt-4">{{ quiz.name }}</h2>
+                    <p class="card-text h3 mt-3">
+                        Your score: <span class="font-weight-bold text-primary">{{ score }} out of {{ total_questions }}</span>
+                    </p>
+                    <p class="card-text text-muted h4 mt-2">({{ percentage|floatformat:2 }}%)</p>
+                    
+                    <div class="mt-4">
+                        {% if percentage >= 80 %}
+                            <p class="lead text-white">Excellent work! You nailed it.</p>
+                        {% elif percentage >= 50 %}
+                            <p class="lead text-white">Good job! You passed the quiz.</p>
+                        {% else %}
+                            <p class="lead text-white">Keep practicing! You can do better.</p>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'quiz_list' %}" class="btn btn-secondary btn-lg mt-4">Back to Quiz List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

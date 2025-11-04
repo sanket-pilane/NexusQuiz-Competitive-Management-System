@@ -1,0 +1,105 @@
+{% extends 'quiz/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center mb-0">{{ quiz.name }}</h1>
+        <div id="quiz-timer"></div>
+    </div>
+    <p class="text-center mb-5 text-white">{{ quiz.description }}</p>
+
+    <form method="post" action="{% url 'quiz_submit' pk=quiz.pk %}" id="quiz-form">
+        {% csrf_token %}
+        <div id="question-container">
+            {% for question in questions %}
+            <div class="card question-card {% if not forloop.first %}d-none{% endif %}" id="question-{{ forloop.counter0 }}">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Question {{ forloop.counter }} of {{ questions|length }}</h5>
+                    <p class="question-text mb-4">{{ question.text }}</p>
+
+                    <div class="options-container">
+                        {% for option in question.options.all %}
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option-{{ option.id }}" value="{{ option.id }}">
+                            <label class="form-check-label" for="option-{{ option.id }}">
+                                {{ option.text }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary" id="prev-btn" style="display: none;">Previous</button>
+            <button type="button" class="btn btn-primary" id="next-btn">Next</button>
+            <button type="submit" class="btn btn-success" id="submit-btn" style="display: none;">Submit Quiz</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const quizForm = document.getElementById('quiz-form');
+        const questionCards = document.querySelectorAll('.question-card');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        let currentQuestionIndex = 0;
+        const totalQuestions = questionCards.length;
+
+        function showQuestion(index) {
+            questionCards.forEach((card, i) => {
+                card.classList.toggle('d-none', i !== index);
+            });
+
+            prevBtn.style.display = index > 0 ? 'inline-block' : 'none';
+            nextBtn.style.display = index < totalQuestions - 1 ? 'inline-block' : 'none';
+            submitBtn.style.display = index === totalQuestions - 1 ? 'inline-block' : 'none';
+        }
+
+        nextBtn.addEventListener('click', function() {
+            if (currentQuestionIndex < totalQuestions - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        });
+
+        prevBtn.addEventListener('click', function() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        });
+
+        showQuestion(currentQuestionIndex);
+
+        const timerDisplay = document.getElementById('quiz-timer');
+        const quizDuration = {{ quiz.duration }} * 60; // Duration in seconds
+        let timeRemaining = quizDuration;
+
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            let seconds = timeRemaining % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timerDisplay.textContent = `${minutes}:${seconds}`;
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                quizForm.submit();
+            } else if (timeRemaining <= 60) {
+                timerDisplay.classList.add('warning');
+            }
+
+            timeRemaining--;
+        }
+
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Initial call to display timer immediately
+    });
+</script>
+{% endblock %}

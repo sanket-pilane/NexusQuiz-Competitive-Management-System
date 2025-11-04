@@ -1,0 +1,17 @@
+{% extends 'quiz/base.html' %}
+{% block content %}
+    <h2>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Question for {{ quiz.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Question</button>
+        <a href="{% url 'admin_dashboard' %}" class="button">Finish</a>
+    </form>
+
+    <h3>Previous Questions</h3>
+    <ul>
+    {% for question in quiz.questions.all %}
+        <li>{{ question.text }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
